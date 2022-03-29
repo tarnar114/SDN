@@ -14,8 +14,8 @@ start = datetime.now()
 print('loading dataset')
 data = pd.read_csv('data/dataset.csv')
 
-X = data.drop('Class', axis=1)
-Y = data['Class']
+X = data.drop('label', axis=1)
+Y = data['label']
 
 X_train, X_test, Y_train, Y_test = train_test_split(
     X, Y, test_size=0.2, random_state=0)
