@@ -37,6 +37,5 @@ if __name__ == "__main__":
     h2 = net.get("h2")
     h3 = net.get("h3")
     h4 = net.get("h4")
-
     CLI(net)
     net.stop()

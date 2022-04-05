@@ -1,8 +1,7 @@
 from datetime import datetime
+from mimetypes import init
 from tkinter import Y
-import joblib
-from matplotlib.pyplot import axis
-
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -10,50 +9,30 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.metrics import accuracy_score
-start = datetime.now()
-print('loading dataset')
-data = pd.read_csv('data/dataset.csv')
 
-X = data.drop('label', axis=1)
-Y = data['label']
+class SVMmodel:
+    def __init__(self):
+        self.train()
+    def predict(self,x):
+        x=self.std.transform([x])
+        return self.svm.predict(x)
+    def train(self):
+        start = datetime.now()
+        data = pd.read_csv('data/data.csv')
 
-X_train, X_test, Y_train, Y_test = train_test_split(
-    X, Y, test_size=0.2, random_state=0)
+        X = data.iloc[:,:-1]
+        Y = data["label"]
 
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-
-classifier = SVC(kernel='linear', random_state=0)
-flow_model = classifier.fit(X_train, Y_train)
-
-y_pred = flow_model.predict(X_test)
-
-print("------------------------------------------------------------------------------")
-print("confusion matrix")
-cm = confusion_matrix(Y_test, y_pred)
-cr = classification_report(Y_test, y_pred)
-
-print('classification of the test set/n')
-print(y_pred)
-
-print('confusion matrix\n')
-print(cm)
-
-print('classification report\n')
-print(cr)
-
-acc=accuracy_score(Y_test,y_pred)
-print("succes accuracy = {0:.2f} %\n".format(acc*100))
-
-fail=1.0-acc
-print("fail accuracy = {0:.2f} %".format(fail*100))
+        scaler = StandardScaler()
+        scaler.fit(X.values)
+        X = scaler.transform(X)
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            X, Y, test_size=0.2, random_state=1,stratify=Y)
 
 
-print("------------------------------------------------------------------------------")
-end = datetime.now()
-print("Training time: ", (end-start)) 
+        classifier = SVC(kernel='linear', random_state=0).fit(X_train,Y_train)
 
-filename='classifier.sav'
-joblib.dump(flow_model,filename)
-print('model exported')
+
+        self.svm=classifier
+        self.std=scaler
+
